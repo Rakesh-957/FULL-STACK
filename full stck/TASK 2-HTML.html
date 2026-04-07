@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Premium Animated To Do List</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(-45deg, #00adb5, #007b83, #312229, #393e46);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        .container {
+            backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.15);
+            padding: 30px;
+            border-radius: 20px;
+            width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: floatCard 4s ease-in-out infinite;
+            color: white;
+        }
+
+        @keyframes floatCard {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 65%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #00fff7;
+            color: black;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #00fff7;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        li {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.4s ease;
+            transition: 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {opacity: 0; transform: translateX(-20px);}
+            to {opacity: 1; transform: translateX(0);}
+        }
+
+        li.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+
+        .delete-btn {
+            background: crimson;
+            color: white;
+            font-size: 12px;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 0 10px crimson;
+        }
+
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Custom Scrollbar */
+        ul::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ul::-webkit-scrollbar-thumb {
+            background: #00fff7;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>✨ Premium To Do List</h2>
+
+    <div class="top-bar">
+        <button onclick="clearAll()">Clear</button>
+        <button onclick="toggleTheme()">Dark</button>
+    </div>
+
+    <div>
+        <input type="text" id="taskInput" placeholder="Enter task...">
+        <button onclick="addTask()">Add</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <div class="footer">
+        <span id="taskCount">0 Tasks</span>
+    </div>
+</div>
+
+<script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function saveTasks() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+        let list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        tasks.forEach((task, index) => {
+            let li = document.createElement("li");
+            li.textContent = task.text;
+            if (task.completed) li.classList.add("completed");
+
+            li.onclick = function () {
+                tasks[index].completed = !tasks[index].completed;
+                saveTasks();
+                renderTasks();
+            };
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "X";
+            deleteBtn.className = "delete-btn";
+            deleteBtn.onclick = function (e) {
+                e.stopPropagation();
+                li.style.transform = "translateX(100px)";
+                li.style.opacity = "0";
+                setTimeout(() => {
+                    tasks.splice(index, 1);
+                    saveTasks();
+                    renderTasks();
+                }, 300);
+            };
+
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+        });
+
+        document.getElementById("taskCount").textContent =
+            tasks.length + " Tasks";
+    }
+
+    function addTask() {
+        let input = document.getElementById("taskInput");
+        let text = input.value.trim();
+
+        if (text === "") {
+            alert("Enter task");
+            return;
+        }
+
+        tasks.push({ text: text, completed: false });
+        input.value = "";
+        saveTasks();
+        renderTasks();
+    }
+
+    function clearAll() {
+        tasks = [];
+        saveTasks();
+        renderTasks();
+    }
+
+    function toggleTheme() {
+        document.body.style.background =
+            "linear-gradient(-45deg, #1e1e1e, #121212, #000, #222)";
+    }
+
+    document.getElementById("taskInput")
+        .addEventListener("keypress", function(e) {
+            if (e.key === "Enter") addTask();
+        });
+
+    renderTasks();
+</script>
+
+</body>
+</html>

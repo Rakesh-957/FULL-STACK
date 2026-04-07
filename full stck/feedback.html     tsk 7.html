@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Feedback Form</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg,#4facfe,#00f2fe);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Card */
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: fade 1s;
+}
+
+h2 { text-align: center; }
+
+/* Inputs */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+  border-color: #4facfe;
+  box-shadow: 0 0 8px #4facfe;
+}
+
+/* Error */
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 10px;
+  background: #4facfe;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #007bff;
+}
+
+/* Success Popup */
+.popup {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  background: #00c853;
+  color: white;
+  border-radius: 10px;
+  margin-top: 10px;
+  animation: fade 0.5s;
+}
+
+/* Animation */
+@keyframes fade {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+</style>
+
+<script>
+function validateName() {
+  let name = document.getElementById("name").value;
+  let error = document.getElementById("nameError");
+
+  if (!/^[A-Za-z ]+$/.test(name)) {
+    error.innerText = "Only letters allowed";
+    return false;
+  } else {
+    error.innerText = "";
+    return true;
+  }
+}
+
+function submitForm() {
+  let nameValid = validateName();
+
+  if (nameValid) {
+    document.getElementById("popup").style.display = "block";
+  }
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="container">
+  <h2>💬 Feedback</h2>
+
+  <input type="text" id="name" placeholder="Your Name" onkeyup="validateName()">
+  <div id="nameError" class="error"></div>
+
+  <textarea placeholder="Your Feedback"></textarea>
+
+  <button onclick="submitForm()">Submit</button>
+
+  <div id="popup" class="popup">
+    ✅ Feedback Submitted Successfully!
+  </div>
+</div>
+
+</body>
+</html>
